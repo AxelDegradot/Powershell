@@ -1,0 +1,27 @@
+$remoteComputer = "SRV-GEOLANE"  # Nom ou adresse IP du PC distant
+$remotePath = "\\SRV-GEOLANE\E-LLIANCE\BASE ARTICLE.csv"  # Chemin réseau du fichier spécifique
+
+# Vérifie si le fichier existe
+if (Test-Path $remotePath) {
+    # Récupère les informations du fichier
+    $lastModified = (Get-Item $remotePath).LastWriteTime
+    $name = (Get-Item $remotePath).Name
+
+    # Préparation de l'email à envoyer
+    $sendMailMessageSplat = @{
+        From = 'e-lliance@soparco.com'  # Adresse de l'expéditeur
+        To = 'ADegradot <a.degradot@soparco.com>'  # Destinataire
+        Subject = 'MISE A JOURS DES FICHIER E-LLIANCE'
+        Body = "Le fichier $name sur $remoteComputer a ete modifie pour la dernière fois le : $lastModified"
+        DeliveryNotificationOption = 'OnSuccess', 'OnFailure'  # Notification de livraison
+        SmtpServer = 'mail1.sfrbusinessteam.fr'  # Serveur SMTP
+        Port = '25'
+        
+    }
+
+    # Envoi de l'email
+    Send-MailMessage @sendMailMessageSplat
+    Write-Host "L'email a été envoyé avec la pièce jointe '$name'."
+} else {
+    Write-Host "Le fichier spécifié n'existe pas sur $remoteComputer. Vérifiez le chemin et l'accessibilité."
+}

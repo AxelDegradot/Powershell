@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Mise à jour de Debian 
+apt update && apt upgrade -y
+
+# Installation des différents rôles et fonctionnalités
+apt install apache2 php mariadb-server -y
+apt install php-{mysql,mbstring,curl,gd,xml,intl,ldap,apcu,xmlrpc,zip,bz2,imap} -y
+
+# Configuration de la base de données MySQL
+echo "Création de la base de données GLPI"
+mysql -u root -e "
+CREATE DATABASE dbglpi;
+GRANT ALL PRIVILEGES ON dbglpi.* TO 'admin'@'localhost' IDENTIFIED BY 'Ekod2025';
+FLUSH PRIVILEGES;
+"
+
+# Téléchargement de GLPI
+cd /tmp
+wget https://github.com/glpi-project/glpi/releases/download/10.0.17/glpi-10.0.17.tgz
+
+# Extraction de l'archive dans le répertoire d'Apache
+tar -xvzf glpi-10.0.17.tgz -C /var/www/html
+
+# Attribution des permissions appropriées
+chown -R www-data:www-data /var/www/html/glpi
+
+#Verifier si il ya la présence du dossier GLPI
+ls -l /var/www/html/ 
+
+# Redémarrage des services nécessaires
+systemctl restart apache2
+systemctl restart mariadb
+
+echo "Installation terminée. GLPI est accessible via http:/172.16.3.6"

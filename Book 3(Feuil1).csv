@@ -1,4 +1,0 @@
-Prenom;Nom;Login;MotDePasse;OU;Groupe
-Jean;Dupont;jdupont;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;Comptabilite
-Marie;Martin;mmartin;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;RH
-Paul;Durand;pdurand;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;Informatique

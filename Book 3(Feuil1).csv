@@ -1,2 +1,4 @@
-Prénom;Nom;login;mdp;OU;group
-Toto;tata;t.tata;Root;OU=USER,OU=NOVAIR INDUSTRIE,DC=NOVAIR,DC=LAN;IT_RO
+Prenom;Nom;Login;MotDePasse;OU;Groupe
+Jean;Dupont;jdupont;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;Comptabilite
+Marie;Martin;mmartin;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;RH
+Paul;Durand;pdurand;P@ssw0rd123;OU=Employes,DC=entreprise,DC=local;Informatique

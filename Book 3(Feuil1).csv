@@ -1,0 +1,2 @@
+Prénom;Nom;login;mdp;OU;group
+Toto;tata;t.tata;Root;OU=USER,OU=NOVAIR INDUSTRIE,DC=NOVAIR,DC=LAN;IT_RO

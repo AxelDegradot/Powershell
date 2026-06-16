@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Répertoires à sauvegarder
+SOURCE_DIRS=(
+    "/mnt/windows/Partages/Documents"
+    "/mnt/windows/Partages/Comptabilite"
+)
+
+# Répertoire temporaire local
+BACKUP_TMP="/tmp/backups"
+
+# Destination sur le serveur Linux
+REMOTE_USER="backupuser"
+REMOTE_HOST="192.168.1.100"
+REMOTE_DIR="/srv/backups"
+
+# Répertoire des logs
+LOG_DIR="/var/log/backup"
+DATE=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_FILE="$LOG_DIR/backup_$DATE.log"
+
+mkdir -p "$BACKUP_TMP"
+mkdir -p "$LOG_DIR"
+
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
+}
+
+log "=== Début de la sauvegarde ==="
+
+for DIR in "${SOURCE_DIRS[@]}"; do
+
+    if [ -d "$DIR" ]; then
+
+        FOLDER=$(basename "$DIR")
+        ARCHIVE="$BACKUP_TMP/${FOLDER}_$DATE.tar.gz"
+
+        log "Compression de $DIR"
+
+        if tar -czf "$ARCHIVE" -C "$(dirname "$DIR")" "$FOLDER"; then
+            log "Archive créée : $ARCHIVE"
+
+            log "Transfert vers $REMOTE_HOST"
+
+            if scp "$ARCHIVE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/"; then
+                log "Transfert réussi"
+            else
+                log "ERREUR lors du transfert"
+            fi
+
+        else
+            log "ERREUR lors de la compression"
+        fi
+
+    else
+        log "Répertoire introuvable : $DIR"
+    fi
+
+done
+
+log "=== Fin de la sauvegarde ==="

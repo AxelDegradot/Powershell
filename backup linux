@@ -1,0 +1,30 @@
+#!/bin/bash
+PARTAGE="//192.168.20.7/Partage"
+MONTAGE="/mnt/partages-windows"
+DEST="/backup/partage"
+LOG="/var/log/novair_backup_partage.log"
+DATE=$(date +"%Y-%m-%d_%H-%M")
+ARCHIVE="${DEST}/partage_${DATE}.tar.gz"
+
+mkdir -p "$MONTAGE" "$DEST"
+
+echo "[$(date)] Debut sauvegarde" | tee -a "$LOG"
+
+mount -t cifs "$PARTAGE" "$MONTAGE" -o credentials=/etc/novair-smb.creds,vers=3.0
+if [ $? -ne 0 ]; then
+    echo "[$(date)] ERREUR montage" | tee -a "$LOG"
+    exit 1
+fi
+
+echo "[$(date)] Partage monte OK" | tee -a "$LOG"
+
+tar -czf "$ARCHIVE" "$MONTAGE"
+
+if [ $? -eq 0 ]; then
+    echo "[$(date)] Sauvegarde OK : $ARCHIVE" | tee -a "$LOG"
+else
+    echo "[$(date)] ERREUR sauvegarde" | tee -a "$LOG"
+fi
+
+umount "$MONTAGE"
+echo "[$(date)] Fin sauvegarde" | tee -a "$LOG"
